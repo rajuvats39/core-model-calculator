@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Model Calculator</title>
+</head>
+<body>
+    <h2>Core Model Calculator</h2>
+    <div>
+        <label for="coreModel">Enter Core Model (e.g., EE25/13/7):</label>
+        <input type="text" id="coreModel" name="coreModel" required>
+        <button onclick="sendRequest()">Calculate</button>
+    </div>
+
+    <!-- Display results here -->
+    <div id="result">
+        <!-- Java Servlet will inject the result here -->
+    </div>
+    <script>
+	    function sendRequest() {
+	    	const data = document.getElementById("coreModel").value;
+	    	const result = document.getElementById("result");
+	    	result.innerHTML = '';
+	    	
+		    const xhr = new XMLHttpRequest();
+		
+		    xhr.addEventListener("readystatechange", function () {
+		      if (this.readyState === this.DONE) {
+		        console.log(this.responseText);
+		        let jsonData = JSON.parse(this.responseText);
+		        let html = `<ul>
+		        	<li>Effective Area: ${jsonData.effectiveArea}</li>
+		        	<li>Effective Length: ${jsonData.effectiveLength}</li>
+		        	<li>Effective Volumn: ${jsonData.effectiveVolumn}</li>
+		        	<li>Minimum Window Area: ${jsonData.minWindowArea}</li>
+		        	</ul>`;
+		        result.innerHTML = html;
+		      }
+		    });
+		
+		    xhr.open("POST", "/calculator");
+		    xhr.setRequestHeader("Accept", "application/json");
+		    xhr.setRequestHeader("Content-Type", "text/plain");
+		
+		    xhr.send(data);
+	    }
+    </script>
+</body>
+</html>
